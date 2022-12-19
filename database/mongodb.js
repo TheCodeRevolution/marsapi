@@ -1,4 +1,5 @@
-const MongoClient = require("mongodb").MongoClient;
+"use strict";
+
 const _dirname  = process.cwd()
 const config = require(_dirname + "/config/config");
 

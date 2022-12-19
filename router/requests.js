@@ -1,3 +1,5 @@
+"use strict";
+
 const _dirname = process.cwd();
 const MongoInterpreter = require(_dirname + "/database/interpreter");
 const Router = require("koa-router");
