@@ -1,15 +1,31 @@
 "use strict";
-
 const _dirname = process.cwd();
-const MongoInterpreter = require(_dirname + "/database/interpreter");
+const DynamicClassRouter = require(_dirname + "/router/DynamicClassRouter");
 const Router = require("koa-router");
 const router = new Router({
-    prefix: "/api",
+  prefix: "/api",
 });
 
-router.post("/endpoint", (ctx) => {
-  let interpreter = new MongoInterpreter();
-  interpreter.find(ctx.request.body);
+const classRouter = new DynamicClassRouter();
+
+router.post("/endpoint/:action", async (ctx) => {
+  let action = ctx.params.action;
+
+  const mongoAction = await classRouter.getClassByRouterName(action);
+
+  if (mongoAction === undefined) {
+    ctx.status = 400;
+    ctx.body = JSON.stringify({
+      error: "Undefinded action",
+    });
+    return;
+  }
+
+  const data = await mongoAction(ctx.request.body);
+  console.log(data);
+
+  ctx.status = data.error ? 400 : 200;
+  ctx.body = data;
 });
 
 module.exports = router;

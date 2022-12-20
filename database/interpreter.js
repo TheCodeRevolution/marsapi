@@ -12,42 +12,61 @@ const insertOne = zod.object({
 
 const find = zod.object({
   auth: zod.boolean(),
-  query: zod.object({}),
+  filter: zod.object({}),
   table: zod.string(),
   user: zod.object({}).optional(),
 });
 
+const MongoConnection = require(_dirname + "/database/mongodb.js");
+
+
+const connection = new MongoConnection();
+
 module.exports = class MongoInterpreter {
   constructor() {}
 
-  async initDatabase() {
-    const MongoConnection = require(_dirname + "/database/mongodb.js");
-    let connection = new MongoConnection();
-    const database = await connection.init();
-    return database;
-  }
-
   async insertOne(request) {
-    insertOne.parse(request);
 
-    const database = await this.initDatabase();
+    try {
+      insertOne.parse(request);
 
-    const response = await database
-      .collection(request.table)
-      .insertOne(request.body);
-    console.log(response);
-    return response;
+      //Connect to database
+      const {client, database} = await connection.init();
+  
+      const response = await database
+        .collection(request.table)
+        .insertOne(request.body);
+
+      console.log(response);
+
+    //Close connection after Action
+    client.close();
+
+      return response;
+    } catch (error) {
+      return { error };
+    }
   }
 
   async find(request) {
-    find.parse(request);
+    try {
+      find.parse(request);
+      
+      //Connect to database
+      const {client, database} = await connection.init();
 
-    const database = await this.initDatabase();
+      const result = await database
+        .collection(request.table)
+        .find(request.query)
+        .toArray();
 
-    const result = await database
-      .collection(request.table)
-      .find(request.query)
-      .toArray();
-    return result;
+
+        //Close connection after Action
+        client.close();
+
+      return result;
+    } catch (error) {
+      return { error };
+    }
   }
 };

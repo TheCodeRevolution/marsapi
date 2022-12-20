@@ -23,10 +23,8 @@ module.exports = class MongoConnection {
     const dbName = config.database.database || "MarsAPI";
 
     await client.connect();
-    const db = client.db(dbName);
+    const database = client.db(dbName);
 
-    console.log("Die Datenbank wurde erfolgreich initialisiert!")
-
-    return db;
+    return {client, database};
   }
 };
