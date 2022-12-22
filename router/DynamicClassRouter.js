@@ -6,17 +6,18 @@ const _dirname = process.cwd();
 const MongoInterpreter = require(_dirname + "/database/interpreter");
 
 module.exports = class DynamicClassRouter {
-    constructor(){
-        this.mongoInterpreter = new MongoInterpreter();
+  constructor() {
+    this.mongoInterpreter = new MongoInterpreter();
+  }
+
+  async getClassByRouterName(name) {
+    if (
+      this.mongoInterpreter[name] &&
+      typeof this.mongoInterpreter[name] === "function"
+    ) {
+      return this.mongoInterpreter[name];
     }
 
-    async getClassByRouterName(name) {
-
-        if(typeof this.mongoInterpreter[name] === "function") {
-            return this.mongoInterpreter[name];
-        }
-        
-        return undefined;
-    }
-}
-
+    return undefined;
+  }
+};

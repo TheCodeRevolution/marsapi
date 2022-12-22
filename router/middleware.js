@@ -18,7 +18,13 @@ async function middleware(ctx, next) {
   // Prüfen, ob der Request bestimmte Header enthält (z.B. X-XSS-Protection)
   if (!checkHeaders(ctx)) return;
 
-  await next();
+  try {
+    await next();    
+  } catch (error) {
+    ctx.status = 400;
+    ctx.body = { error };
+  }
+
 }
 
 const checkHeaders = (ctx) => {
@@ -31,7 +37,7 @@ const checkHeaders = (ctx) => {
     ctx.body = { error: "Insecure Action Code: 1000" };
     return false;
   }
-
+  
   return true;
 };
 

@@ -3,12 +3,13 @@
 (async () => {
   const Koa = require("koa");
   const { koaBody } = require("koa-body");
-  const cors = require('@koa/cors');
+  const cors = require("@koa/cors");
   const config = require("./config/config");
   const requestsRouter = require("./router/requests");
   const middleware = require("./router/middleware");
   const session = require("koa-session");
   const passport = require("koa-passport");
+  const ModuleLoader = require("./utils/ModuleLoader");
 
   require("dotenv").config();
   require("./utils/Formatter");
@@ -29,9 +30,14 @@
   app.use(middleware);
 
   app.use(requestsRouter.routes());
-  
+
   app.use(session({}, app));
 
+  const modules = new ModuleLoader({
+    modulesDir: "/modules",
+  });
+
+  await modules.loadModules();
 
   //Startet den Server
   app.listen(config.nodejsPort, () => {

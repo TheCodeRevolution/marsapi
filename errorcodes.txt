@@ -1,2 +1,7 @@
+Middle ware Error codes
 1000: x-xss-protection
 1001: content-security-policy
+
+User Error codes
+2000: User dont have permissions to do that action
+2001: User not exists
