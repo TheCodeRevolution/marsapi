@@ -1,0 +1,2 @@
+1000: x-xss-protection
+1001: content-security-policy

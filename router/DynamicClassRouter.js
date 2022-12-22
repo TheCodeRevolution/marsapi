@@ -15,6 +15,7 @@ module.exports = class DynamicClassRouter {
         if(typeof this.mongoInterpreter[name] === "function") {
             return this.mongoInterpreter[name];
         }
+        
         return undefined;
     }
 }
